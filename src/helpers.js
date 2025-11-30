@@ -3,36 +3,21 @@
  * Provides data loading, caching, component finding, and search utilities
  * for the MagentaA11y accessibility criteria tools
  */
-import { readFileSync } from 'fs';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
 
-// Get directory of current module for relative path resolution
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+// Import content.json directly - works with bundlers (esbuild, webpack) and Node.js
+// This approach is compatible with Netlify Functions bundling
+import contentData from '../data/content.json' with { type: 'json' };
 
-// Cache for loaded content data
-let contentCache = null;
+// Cache reference (using imported data directly)
+const contentCache = contentData;
 
 /**
  * Load and cache content.json data
- * Uses memory caching for performance - data is loaded once per process
+ * Uses static import for bundler compatibility (Netlify Functions)
  * @returns {Object} Parsed content data with web and native sections
  */
 export function loadContent() {
-    if (contentCache) {
-        return contentCache;
-    }
-    
-    try {
-        // Try relative path from src directory
-        const contentPath = join(__dirname, '..', 'data', 'content.json');
-        const rawData = readFileSync(contentPath, 'utf8');
-        contentCache = JSON.parse(rawData);
-        return contentCache;
-    } catch (error) {
-        throw new Error(`Failed to load content.json: ${error.message}`);
-    }
+    return contentCache;
 }
 
 /**
