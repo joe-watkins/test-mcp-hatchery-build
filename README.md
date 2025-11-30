@@ -1,8 +1,22 @@
-# test-mcp-hatchery-build
+# MagentaA11y MCP Server
 
-Just a test to see if it works
+MCP server providing accessibility criteria from [MagentaA11y](https://www.magentaa11y.com/). Works locally (stdio) and remotely (Netlify Functions).
 
-A Model Context Protocol (MCP) server that works both locally (stdio) and remotely (Netlify Functions).
+## Tools (11 total)
+
+| Tool | Description |
+|------|-------------|
+| `list_web_components` | List web accessibility components (51 total) |
+| `get_web_component` | Get detailed criteria for a web component |
+| `search_web_criteria` | Search web criteria by keyword |
+| `list_native_components` | List native iOS/Android components (42 total) |
+| `get_native_component` | Get detailed criteria for a native component |
+| `search_native_criteria` | Search native criteria by keyword |
+| `get_component_gherkin` | Get Gherkin-style acceptance criteria |
+| `get_component_condensed` | Get condensed acceptance criteria |
+| `get_component_developer_notes` | Get developer implementation notes |
+| `get_component_native_notes` | Get iOS or Android specific notes |
+| `list_component_formats` | List available formats for a component |
 
 ## Installation
 
@@ -10,40 +24,27 @@ A Model Context Protocol (MCP) server that works both locally (stdio) and remote
 npm install
 ```
 
-
-### Configure your IDE
-
-Add this to your Claude Desktop MCP settings:
+### Local Use (Claude Desktop)
 
 ```json
 {
   "mcpServers": {
-    "test-mcp-hatchery-build": {
+    "magentaa11y": {
       "command": "node",
-      "args": ["C:/sites/test-mcp-hatchery-build/src/index.js"]
+      "args": ["C:/path/to/src/index.js"]
     }
   }
 }
 ```
 
-## Deploy to Netlify
+### Remote Use (Netlify)
 
-This project is configured to deploy as a Netlify Function.
-
-### Deploy via GitHub
-
-1. Push this repository to GitHub
-2. Connect it to Netlify via the Netlify dashboard
-3. Netlify will automatically build and deploy
-
-### Using the Remote Server
-
-Once deployed, configure your Claude Desktop MCP settings to use the remote server:
+Deploy to Netlify, then:
 
 ```json
 {
   "mcpServers": {
-    "test-mcp-hatchery-build": {
+    "magentaa11y": {
       "command": "npx",
       "args": ["mcp-remote@next", "https://your-site.netlify.app/mcp"]
     }
@@ -51,45 +52,10 @@ Once deployed, configure your Claude Desktop MCP settings to use the remote serv
 }
 ```
 
-Replace `your-site.netlify.app` with your actual Netlify URL.
+## Project Structure
 
-#### Available Endpoints:
-
-- **MCP Endpoint**: `https://your-site.netlify.app/mcp`
-- **Health Check**: `https://your-site.netlify.app/mcp`
-
-## Project Structure\n\n- `src/index.js` - Main MCP server with stdio transport (local use)
+- `src/index.js` - MCP server (stdio transport)
 - `src/tools.js` - Tool definitions and handlers
-- `netlify/functions/api.js` - Netlify Function wrapper with SSE transport (remote use)
-- `netlify.toml` - Netlify configuration
-
-## Generating Tools from Data
-
-You can use the `data` folder to store JSON files and use an LLM (like Claude or Copilot) to generate tools for them.
-
-1. Place your JSON file in the `data` folder (e.g., `data/products.json`).
-2. Use the following prompt with your LLM:
-
-> I have a JSON file at `data/products.json` (or whatever your file is named). Please analyze the structure of this data and create new MCP tools in `src/tools.js` to interact with it.
->
-> At a minimum, please create:
-> 1. A tool to list all items (with optional filtering)
-> 2. A tool to get a specific item by ID (or unique field)
-> 3. A tool to search items by a keyword
->
-> Please ensure the tools follow the existing pattern in `src/tools.js` and include proper error handling.
-
-## Adding New Tools
-
-Edit `src/tools.js` to add new tool definitions. Each tool needs:
-
-- **name**: Unique identifier for the tool
-- **description**: What the tool does
-- **inputSchema**: JSON Schema object defining the input parameters
-- **handler**: Async function that implements the tool logic
-
-## Learn More
-
-- [Model Context Protocol Documentation](https://modelcontextprotocol.io/)
-- [MCP TypeScript SDK](https://github.com/modelcontextprotocol/typescript-sdk)
-- [Netlify Functions](https://docs.netlify.com/functions/overview/)
+- `src/helpers.js` - Data loading and search utilities
+- `data/content.json` - MagentaA11y accessibility criteria
+- `netlify/functions/api.js` - Netlify Function (SSE transport)
